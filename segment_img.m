@@ -34,8 +34,7 @@ function [graph, filenames] = segment_img(img_in, h_out, w_out)
 
     %contrast
     i3 = imadjust(i2);
-    size(i3)
-
+    
     %threshold (binarize img)
     %Remove small objects from binary image
     bw = imbinarize(i3);
@@ -54,29 +53,30 @@ function [graph, filenames] = segment_img(img_in, h_out, w_out)
     BB = regionprops(cc, 'BoundingBox');
     num_boxes = length(BB);
     
-   %plot(nesting_graph(BB), 'LineWidth',3);
+    %plot(nesting_graph(BB), 'LineWidth',3);
     graph = nesting_graph(BB);
 
 
     filenames = strings(1, num_boxes);
     out_dir = 'out/';
-         
+     
     %crop, pad, invert and save each bounding box
     for rect = 1:num_boxes
         
         %draw bounding boxes
-        %i3 = insertShape(i3, 'Rectangle', BB(rect).BoundingBox, 'Color', 'yellow','LineWidth',2);
-        
-        
+        i3 = insertShape(i3, 'Rectangle', BB(rect).BoundingBox, 'Color', 'yellow','LineWidth',3);
+       
         crop = imcrop(bw, BB(rect).BoundingBox);
         crop = imcomplement(crop); %make background white, text black
         
+
+          
         [ih, iw] = size(crop);
        
         %scale images appropriately 
         
         if ih < h_out && iw < w_out
-            pad = [ floor((h_out-ih)/2)  floor((w_out-iw)/2)];
+            pad = [ floor((h_out-ih)/2)  floor((w_out-iw)/2)];          
             crop = padarray(crop, pad, 1, 'both');
      
         elseif ih >= h_out && iw < w_out 
@@ -91,14 +91,17 @@ function [graph, filenames] = segment_img(img_in, h_out, w_out)
             pad = [ floor((h_out-h)/2) 0];
             crop = padarray(crop, pad, 1, 'both');
         end
-
+    
+        
         crop = imresize(crop, [h_out w_out]);
-
+        
+        
         filename = sprintf('char_%d.png', rect);
         filenames(rect) = filename;
         imwrite(crop, strcat(out_dir,filename));
 
     end
+    
 
 end
 

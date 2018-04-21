@@ -2,7 +2,7 @@ function [network, labels] = model_loader(model_path, labels_path)
 %MODEL_LOADER will import the pre-trained Keras network, and
 % create a data structure of labels that are defined in the keras network.
 %
-% labels: {id: 123, symbol: +}, {id:456, symbol: x} ...
+% labels: {id: 123, symbol: +}, {id:456, symbol: \pi} ...
 %
     
     network = importKerasNetwork(model_path);
